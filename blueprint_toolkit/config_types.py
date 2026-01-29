@@ -34,6 +34,23 @@ class Checkpoint:
     """ID of the Chariot checkpoint"""
 
 
+class CheckpointEngineSelector(TypedDict):
+    """An inference engine selector."""
+
+    org_name: str
+    project_name: str
+    engine_name: str
+    version: NotRequired[str]
+
+
+class CheckpointInferenceServerSettingsDict(TypedDict):
+    """The subset of settings for a model's inference server that are relevant to checkpoints."""
+
+    engine_selector: NotRequired[CheckpointEngineSelector]
+    """A description of which custom inference engine to use.
+    Only relevant for models with ``artifact_type`` of ``custom-engine``."""
+
+
 class ModelConfigDict(TypedDict):
     """Schema for cataloging a checkpoint as a model."""
 
@@ -44,3 +61,8 @@ class ModelConfigDict(TypedDict):
     """Mapping from class labels to integer IDs."""
     copy_key_suffixes: list[str]
     """List of S3 key suffixes from the checkpoint to include in the model."""
+    isvc_settings: NotRequired[CheckpointInferenceServerSettingsDict]
+    """Inference service settings for the model."""
+    supported_engines: NotRequired[list[CheckpointEngineSelector]]
+    """List of inference engines that can be used with this model.
+    Only relevant for models with ``artifact_type`` of ``custom-engine``."""

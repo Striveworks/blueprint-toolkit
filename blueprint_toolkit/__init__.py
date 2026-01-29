@@ -40,6 +40,8 @@ from .config_types import (
     DatasetSnapshot,
     Model,
     Checkpoint,
+    CheckpointEngineSelector,
+    CheckpointInferenceServerSettingsDict,
     ModelConfigDict,
 )
 from .s3 import (
@@ -76,6 +78,8 @@ __all__ = [
     "DatasetSnapshot",
     "Model",
     "Checkpoint",
+    "CheckpointEngineSelector",
+    "CheckpointInferenceServerSettingsDict",
     "ModelConfigDict",
     "upload_directory_to_s3",
     "download_directory_from_s3",
