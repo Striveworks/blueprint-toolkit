@@ -7,7 +7,7 @@ progress saving, metric saving, and checkpoint loading and saving.
 
 import logging
 import signal
-from collections.abc import Generator
+from collections.abc import Generator, Iterator
 from contextlib import ExitStack, contextmanager
 from typing import Any
 
@@ -416,3 +416,51 @@ def local_run_context(
         metric_saver=MemoryMetricSaver(),
         checkpoint_manager=LocalFileCheckpointManager(run_id=run_id, base_dir=base_dir),
     )
+
+
+# Default provider (local) is set at import time
+_RUN_CONTEXT_PROVIDER = None
+
+
+def set_run_context_factory(provider):
+    """Set the run context provider to be used by the open_run_context function.
+
+    Provider signature:
+        provider(run_id: str, config: dict[Any, Any] | None = None, base_dir: str | None = None) -> contextmanager
+    """
+    global _RUN_CONTEXT_PROVIDER
+    _RUN_CONTEXT_PROVIDER = provider
+
+
+@contextmanager
+def open_run_context(
+    run_id: str, config: dict[Any, Any] | None = None, base_dir: str | None = None
+) -> Iterator[RunContext]:
+    """Open a run context using the provider set by set_run_context_factory.
+
+    Parameters
+    ----------
+    run_id: str
+        The ID of the run.
+    config: dict[Any, Any] | None
+        The configuration for the run.
+    base_dir: str | None
+        The base directory for the run.
+
+    Yields
+    ------
+    RunContext
+        The run context.
+
+    Raises
+    ------
+    RuntimeError
+        If no run context provider is set.
+
+    """
+    if _RUN_CONTEXT_PROVIDER is None:
+        raise RuntimeError("No run context provider set")
+    with _RUN_CONTEXT_PROVIDER(
+        run_id=run_id, config=config, base_dir=base_dir
+    ) as run_context:
+        yield run_context
