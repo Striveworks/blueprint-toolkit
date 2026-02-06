@@ -12,6 +12,8 @@ from .exceptions import (
 from .run_context import (
     RunContext,
     local_run_context,
+    set_run_context_factory,
+    open_run_context,
 )
 from .progress_saver import (
     SaveProgressDict,
@@ -62,6 +64,8 @@ __all__ = [
     "RunContextInterruptedError",
     "RunContext",
     "local_run_context",
+    "set_run_context_factory",
+    "open_run_context",
     "SaveProgressDict",
     "ProgressSaver",
     "MemoryProgressSaver",
@@ -88,3 +92,5 @@ __all__ = [
     "SnapshotDict",
     "DatumMetadataDict",
 ]
+
+set_run_context_factory(local_run_context)
